@@ -22,38 +22,45 @@ if not os.path.isfile(ratings_file):
 
 ratings_cache = [] # cache for ratings
 ratings_ids = []
+wanted_episodes = []
 
 def find_rating(titleID):
 	global ratings_cache
 	global ratings_ids
+	global wanted_episodes
 
 	if not ratings_cache: # read ratings file and cache it if we havent already
-		#print("Reading ratings file...")
+
 		with open(ratings_file, encoding="utf8") as f:
 			lines = f.readlines()
 
 		for l in lines:
-			ratings_ids.append(l.split("\t")[0].rstrip())
-			ratings_cache.append({"id": l.split("\t")[0].rstrip(), "rating": l.split("\t")[1].rstrip(), "votes": l.split("\t")[2].rstrip()})
-		
-		#print("Ratings cached:", len(ratings_cache))
+			i = l.split("\t")[0].rstrip()
 
+			if len(wanted_episodes) == 0 and i == titleID: # for Movies: we found the movie
+				return {"rating": l.split("\t")[1].rstrip(), "votes": l.split("\t")[2].rstrip()}
+			else:
+				ratings_ids.append(i)
+				ratings_cache.append({"id": i, "rating": l.split("\t")[1].rstrip(), "votes": l.split("\t")[2].rstrip()})
+		
 	if titleID not in ratings_ids:
 		return {"rating": "0.0", "votes": "0"}
+	elif titleID in ratings_ids:
+		i = ratings_cache[ratings_ids.index(titleID)] # instead of iterating
+		return {"rating": i["rating"], "votes": i["votes"]}
 	else:
-		for i in ratings_cache:
-			if i["id"] == titleID:
-				return {"rating": i["rating"], "votes": i["votes"]}
-				
-	return {"rating": "0.0", "votes": "0"}
+		return {"rating": "0.0", "votes": "0"}
 
 def find_episodes(parentID):
+	global wanted_episodes
 	with open(episodes_file, encoding="utf8") as f:
 		lines = f.readlines()
 	episodes = []
 	for l in lines:
 		if parentID == l.split("\t")[1]: # 1 is parent ID
-			episodes.append({ "id": l.split("\t")[0].rstrip(), "season": l.split("\t")[2].rstrip(), "episode": l.split("\t")[3].rstrip() }) # 0 is episode ID, 2 is season, 3 is episode number
+			i = l.split("\t")[0].rstrip()
+			wanted_episodes.append(i)
+			episodes.append({ "id": i, "season": l.split("\t")[2].rstrip(), "episode": l.split("\t")[3].rstrip() }) # 0 is episode ID, 2 is season, 3 is episode number
 	
 	# sort https://stackoverflow.com/a/16082979
 	s = natsorted(episodes, key=itemgetter('season', 'episode'))
@@ -130,11 +137,11 @@ else:
 print()
 print(picked["name"], "(" + str(picked["year"]) + ")")
 print("https://www.imdb.com/title/" + picked["id"] + "/")
-print()
 
 csv_filename = picked["name"] + "-" + str(datetime.today().strftime('%Y%m%d-%H%M%S')) + ".csv"
 
 if picked["kind"]  == "movie":
+	print()
 	rating_data = find_rating(picked["id"])
 	if rating_data:
 		print("Rating:", rating_data["rating"], "(" + str(rating_data["votes"]) + " votes)")
@@ -142,12 +149,11 @@ if picked["kind"]  == "movie":
 		print("No rating found")
 elif picked["kind"] == "tvSeries":
 	episodes = find_episodes(picked["id"])
+	print(len(episodes), "episodes")
+	print()
 	for ep in tqdm(episodes):
 		rating_data = find_rating(ep["id"])
-
-		if rating_data:
-			#print(sxxeyy(ep["season"], ep["episode"]), rating_data["rating"], "(" + str(rating_data["votes"]) + " votes)")
-			write_csv(csv_filename, sxxeyy(ep["season"], ep["episode"]), rating_data["rating"], rating_data["votes"])
+		write_csv(csv_filename, sxxeyy(ep["season"], ep["episode"]), rating_data["rating"], rating_data["votes"])
 
 
 print()

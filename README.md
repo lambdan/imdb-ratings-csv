@@ -14,7 +14,6 @@ For Movies, no `.csv` will be written. It will just write the rating in the prom
 
 Use pip to install dependencies: `pip3 install natsort tqdm`
 
-![Screenshot](https://lambdan.se/img/2020-12-20_14-16-24.340.png)
-![Screenshot](https://lambdan.se/img/2020-12-20_14-16-24.232.png)
+![Screenshot](https://lambdan.se/img/2020-12-20_20-29-14.322732.png)
 ![Screenshot](https://lambdan.se/img/2020-12-20_14-16-24.270.png)
 ![Screenshot](https://lambdan.se/img/2020-12-20_14-21-31.159.png)
