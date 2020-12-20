@@ -19,16 +19,22 @@ if not os.path.isfile(ratings_file):
 	print(ratings_file, "not found")
 	sys.exit(1)
 
+ratings_lines = False # cache for ratings
 
 def find_rating(titleID):
-	with open(ratings_file, encoding="utf8") as f:
-		lines = f.readlines()
-	for l in lines:
+	global ratings_lines
+	if not ratings_lines:
+		#print("Reading ratings file...")
+		with open(ratings_file, encoding="utf8") as f:
+			lines = f.readlines()
+		ratings_lines = lines # cache 
+
+	for l in ratings_lines:
 		if titleID.lower() in l.lower():
 			rating = l.split("\t")[1].rstrip()
 			votes = l.split("\t")[2].rstrip()
 			return {"rating": rating, "votes": votes}
-	return False
+	return {"rating": "0.0", "votes": "0"}
 
 def find_episodes(parentID):
 	with open(episodes_file, encoding="utf8") as f:
@@ -40,6 +46,7 @@ def find_episodes(parentID):
 	
 	# sort https://stackoverflow.com/a/16082979
 	s = natsorted(episodes, key=itemgetter('season', 'episode'))
+	#print(len(s), "episodes found")
 	return s
 
 def sxxeyy(s, e):
@@ -84,10 +91,9 @@ for l in lines:
 		if kind == "tvSeries" or kind == "movie":
 			matches.append({"id": titleID, "kind": kind, "name": name, "year": year})
 			#print("Found match:", name, year, kind)
-		#if titleID == search_show or name == search_show: # instant match?
-		#	print("Perfect match")
-		#	matches = [{"id": titleID, "kind": kind, "name": name, "year": year}]
-		#	break
+		if titleID == search_show: # instant match?
+			matches = [{"id": titleID, "kind": kind, "name": name, "year": year}]
+			break
 	if len(matches) > 50:
 		print("More than 50 matches... try to be more specific")
 		sys.exit(1)
