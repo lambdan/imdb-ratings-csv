@@ -8,11 +8,13 @@
 	- `python3 imdb.py "friends 1994"`
 	- `python3 imdb.py tt8111088`
 
-For TV Shows a .CSV will be created listing the episode number, rating and amount of votes.
-For Movies, no .CSV will be written. It will just write the rating in the prompt.
+For TV Shows a `.csv` will be created listing the episode number, rating and amount of votes.
+
+For Movies, no `.csv` will be written. It will just write the rating in the prompt.
 
 Use pip to install the natsort package: `pip3 install natsort`
 
 ![Screenshot](https://lambdan.se/img/2020-12-20_14-16-24.340.png)
 ![Screenshot](https://lambdan.se/img/2020-12-20_14-16-24.232.png)
 ![Screenshot](https://lambdan.se/img/2020-12-20_14-16-24.270.png)
+![Screenshot](https://lambdan.se/img/2020-12-20_14-21-31.159.png)
