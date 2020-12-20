@@ -12,3 +12,7 @@ For TV Shows a .CSV will be created listing the episode number, rating and amoun
 For Movies, no .CSV will be written. It will just write the rating in the prompt.
 
 Use pip to install the natsort package: `pip3 install natsort`
+
+![Screenshot](https://lambdan.se/img/2020-12-20_14-16-24.340.png)
+![Screenshot](https://lambdan.se/img/2020-12-20_14-16-24.232.png)
+![Screenshot](https://lambdan.se/img/2020-12-20_14-16-24.270.png)
