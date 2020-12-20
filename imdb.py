@@ -5,18 +5,18 @@ from datetime import datetime
 
 # Get these from https://datasets.imdbws.com/ 
 # TODO maybe automatically download them?
-title_basics_file = "./title_basics.tsv"
-ratings_file = "./ratings.tsv"
-episodes_file = "./title_episode.tsv"
+title_basics_file = "./title.basics.tsv"
+episodes_file = "./title.episode.tsv"
+ratings_file = "./title.ratings.tsv"
 
 if not os.path.isfile(title_basics_file):
 	print(title_basics_file, "not found")
 	sys.exit(1)
-if not os.path.isfile(ratings_file):
-	print(ratings_file, "not found")
-	sys.exit(1)
 if not os.path.isfile(episodes_file):
 	print(episodes_file, "not found")
+	sys.exit(1)
+if not os.path.isfile(ratings_file):
+	print(ratings_file, "not found")
 	sys.exit(1)
 
 
