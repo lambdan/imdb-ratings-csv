@@ -2,6 +2,7 @@ import os, sys
 from operator import itemgetter
 from natsort import natsorted
 from datetime import datetime
+from tqdm import tqdm
 
 # Get these from https://datasets.imdbws.com/ 
 # TODO maybe automatically download them?
@@ -19,21 +20,31 @@ if not os.path.isfile(ratings_file):
 	print(ratings_file, "not found")
 	sys.exit(1)
 
-ratings_lines = False # cache for ratings
+ratings_cache = [] # cache for ratings
+ratings_ids = []
 
 def find_rating(titleID):
-	global ratings_lines
-	if not ratings_lines:
+	global ratings_cache
+	global ratings_ids
+
+	if not ratings_cache: # read ratings file and cache it if we havent already
 		#print("Reading ratings file...")
 		with open(ratings_file, encoding="utf8") as f:
 			lines = f.readlines()
-		ratings_lines = lines # cache 
 
-	for l in ratings_lines:
-		if titleID.lower() in l.lower():
-			rating = l.split("\t")[1].rstrip()
-			votes = l.split("\t")[2].rstrip()
-			return {"rating": rating, "votes": votes}
+		for l in lines:
+			ratings_ids.append(l.split("\t")[0].rstrip())
+			ratings_cache.append({"id": l.split("\t")[0].rstrip(), "rating": l.split("\t")[1].rstrip(), "votes": l.split("\t")[2].rstrip()})
+		
+		#print("Ratings cached:", len(ratings_cache))
+
+	if titleID not in ratings_ids:
+		return {"rating": "0.0", "votes": "0"}
+	else:
+		for i in ratings_cache:
+			if i["id"] == titleID:
+				return {"rating": i["rating"], "votes": i["votes"]}
+				
 	return {"rating": "0.0", "votes": "0"}
 
 def find_episodes(parentID):
@@ -131,11 +142,11 @@ if picked["kind"]  == "movie":
 		print("No rating found")
 elif picked["kind"] == "tvSeries":
 	episodes = find_episodes(picked["id"])
-	for ep in episodes:
+	for ep in tqdm(episodes):
 		rating_data = find_rating(ep["id"])
 
 		if rating_data:
-			print(sxxeyy(ep["season"], ep["episode"]), rating_data["rating"], "(" + str(rating_data["votes"]) + " votes)")
+			#print(sxxeyy(ep["season"], ep["episode"]), rating_data["rating"], "(" + str(rating_data["votes"]) + " votes)")
 			write_csv(csv_filename, sxxeyy(ep["season"], ep["episode"]), rating_data["rating"], rating_data["votes"])
 
 
