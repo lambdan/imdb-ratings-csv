@@ -3,10 +3,7 @@
 		- title.basics
 		- title.episode
 		- title.ratings
-	- Unzip them and name them appropriately:
-		- title_basics.tsv
-		- ratings.tsv
-		- title_episode.tsv
+	- Unzip the `.gz` files and name the `.tsv` files appropriately if they are not
 - Run the script to have it ask you what to search for: `python3 imdb.py`  OR run it with your search query as a parameter:
 	- `python3 imdb.py "friends 1994"`
 	- `python3 imdb.py tt8111088`
